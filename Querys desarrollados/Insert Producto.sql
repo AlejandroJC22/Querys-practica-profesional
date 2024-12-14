@@ -1,0 +1,60 @@
+--------------------------------------------------------------------------------
+---------------------- Creacion Producto ---------------------------------
+select 'INSERT INTO SIEBEL.EIM_FN_ASSET (AST_BU,AST_PROD_BU,AST_PROD_NAME,AST_ASSET_NUM,AST_REV_NUM,PSTN_OU_BU,PSTN_OU_NAME,PSTN_OU_LOC,PSTN_NAME,VIS_BU,AST_TYPE_CD,AST_INTEGRATION_ID,AST_STATUS_CD,AST_PR_POSTN,AST_ADDR_NAME1,AST_AUTO_SR_FLG,AST_COMPUNDWRNTYFL,AST_CUSTOMIZABLEFL,AST_DMNDNG_DR_FLG,AST_FLEET_FLG,AST_PRODUNDWRNTYFL,AST_REFERENCEABLEF,AST_SRLNUMVRFD_FLG,AST_UNDMFGWRNTYFLG,IF_ROW_STAT,IF_ROW_BATCH_NUM,ROW_ID) VALUES (''Default Organization'','''||'Default Organization'||''','''||J.NAME||''','''||A.ADMIN_CONTRACT_ID||''','''||''||''','''||'Default Organization'||''','''||'Siebel Administration'||''','''||'INTERNAL'||''','''||'Siebel Administrator'||''','''||'Default Organization'||''','''||'Fin Account'||''','''||'PFIMDM'||''','''||B.CONTRACT_ST_TP_CD ||''','''||'Y'||''','''||''||''','''||'N'||''','''||'N'||''','''||'N' ||''','''||'N'||''','''||'N' ||''','''||'N' ||''','''||'N' ||''','''||'N' ||''','''||'N'||''','''||'FOR_IMPORT' ||''','''||(CEIL(ROWNUM/20000)+500000000-1) ||''','''||(ROWNUM)||''');'
+FROM ADMMDM.CONTRACT A
+LEFT JOIN ADMMDM.CONTRACTCOMPONENT B ON A.CONTRACT_ID = B.CONTRACT_ID
+LEFT JOIN ADMMDM.CDPRODTP J ON B.PROD_TP_CD = J.PROD_TP_CD
+WHERE 1=1
+AND A.ADMIN_CONTRACT_ID IN ('50030040260',
+'45030026392',
+'00130115108',
+'11330012730',
+'00130213572');
+
+--------------------------------------------------------------------------------
+---------------------- Atributos del producto ---------------------------------
+SELECT 'INSERT INTO SIEBEL.EIM_ASSET_DTL (AST_BU,AST_PROD_BU,AST_PROD_NAME,AST_ASSET_NUM,AST_REV_NUM,EXT_ATTRIB_03,EXT_ATTRIB_26,EXT_ATTRIB_34,EXT_ATTRIB_01,EXT_ATTRIB_02,EXT_ATTRIB_07,EXT_ATTRIB_12,EXT_ATTRIB_04,EXT_ATTRIB_05,EXT_ATTRIB_13,EXT_ATTRIB_27,EXT_ATTRIB_35,EXT_ATTRIB_36,EXT_ATTRIB_37,EXT_ATTRIB_44,EXT_ATTRIB_47,IF_ROW_STAT,IF_ROW_BATCH_NUM,ROW_ID) VALUES (''Default Organization'','''||'Default Organization'||''','''||J.NAME ||''','''||A.ADMIN_CONTRACT_ID ||''','''||''||''','''||''||''','''||TO_CHAR(B.ISSUE_DT, 'DD/MM/YY HH24:MM:SS')||''','''||''||''','''||D.NAME ||''','''||''||''','''||''||''','''||TO_CHAR(B.XPROD_LAST_UPDATE_DT, 'DD/MM/YY HH24:MM:SS')||''','''||E.NAME||''','''||F.NAME||''','''||TO_CHAR(A.TERMINATION_DT, 'DD/MM/YY HH24:MM:SS')||''','''||TO_CHAR(B.EXPIRY_DT, 'DD/MM/YY HH24:MM:SS') ||''','''||A.XLAST_PERIOD ||''','''||A.XMKTG_PROG_TP_CD||''','''||A.XACCT_PKG_TP_CD||''','''||''||''','''||'' ||''','''||'FOR_IMPORT'||''','''||(CEIL(ROWNUM/20000)+500000000-1)||''','''||(ROWNUM)||''');'
+from ADMMDM.CONTRACT A
+LEFT JOIN ADMMDM.CONTRACTCOMPONENT B ON A.CONTRACT_ID = B.CONTRACT_ID
+LEFT JOIN ADMMDM.CDPRODTP J ON B.PROD_TP_CD = J.PROD_TP_CD
+LEFT JOIN ADMMDM.CONTRACTROLE C ON B.CONTR_COMPONENT_ID = C.CONTR_COMPONENT_ID
+LEFT JOIN ADMMDM.XCDACCTOFFCODETP D ON D.ACCT_OFF_CODE_TP_CD = A.XACCT_OFF_CODE_TP_CD
+LEFT JOIN ADMMDM.XCDLOCKCODEONETP E ON E.LOCK_CODE_ONE_TP_CD = A.XLOCK_CODE_ONE_TP_CD
+LEFT JOIN ADMMDM.XCDLOCKCODETWOTP F ON F.LOCK_CODE_TWO_TP_CD = A.XLOCK_CODE_TWO_TP_CD
+LEFT JOIN ADMMDM.IDENTIFIER I ON C.CONT_ID = I.CONT_ID
+WHERE 1=1
+AND A.ADMIN_CONTRACT_ID IN ('50030040260',
+'45030026392',
+'00130115108',
+'11330012730',
+'00130213572');
+
+--------------------------------------------------------------------------------
+---------------------- Relaci�n con la persona ---------------------------------
+select 'INSERT INTO SIEBEL.EIM_FN_ASSET1 (AST_BU,AST_PROD_BU,AST_PROD_NAME,AST_ASSET_NUM,AST_REV_NUM,CON_CON_BU,CON_CON_PRIV_FLG,CON_PERSON_UID,AST_PR_CON,CON_RELATIONTYPECD,IF_ROW_STAT,IF_ROW_BATCH_NUM,ROW_ID) VALUES (''Default Organization'','''||'Default Organization'||''','''||J.NAME||''','''||A.ADMIN_CONTRACT_ID||''','''||''||''','''||'Default Organization'||''','''||'N'||''','''||i.ID_TP_CD || i.ref_num||''','''||'Y'||''','''||CASE WHEN Y.NAME = 'Titular cuenta principal' THEN 'Titular principal producto' ELSE Y.NAME END ||''','''||'FOR_IMPORT'||''','''||(CEIL(ROWNUM/20000)+500100000-1)||''','''||(ROWNUM)||''');'
+from ADMMDM.CONTRACT A
+LEFT JOIN ADMMDM.CONTRACTCOMPONENT B ON A.CONTRACT_ID = B.CONTRACT_ID
+LEFT JOIN ADMMDM.CDPRODTP J ON B.PROD_TP_CD = J.PROD_TP_CD
+LEFT JOIN ADMMDM.CONTRACTROLE C ON B.CONTR_COMPONENT_ID = C.CONTR_COMPONENT_ID
+LEFT JOIN ADMMDM.IDENTIFIER I ON C.CONT_ID = I.CONT_ID
+LEFT JOIN ADMMDM.CDCONTRACTROLETP Y ON C.CONTR_ROLE_TP_CD = Y.CONTR_ROLE_TP_CD
+WHERE 1=1
+AND A.ADMIN_CONTRACT_ID IN ('50030040260',
+'45030026392',
+'00130115108',
+'11330012730',
+'00130213572')
+;
+
+--------------------------------------------------------------------------------
+---------------------- Relaci�n con la empresa ---------------------------------
+select 'INSERT INTO SIEBEL.EIM_ASSET (AST_BI,AST_BU,AST_PROD_BI,AST_PROD_BU,AST_PROD_NAME,AST_ASSET_NUM,AST_REV_NUM,AST_PR_ACCNT,ACCNT_BI,ACCNT_BU,ACCNT_LOC,ACCNT_NAME,ACC_REL_TYPE_CD,IF_ROW_STAT,IF_ROW_BATCH_NUM,ROW_ID) VALUES (''0-R9NH'','''||'Default Organization'||''','''||'0-R9NH'||''','''||'Default Organization'||''','''||J.NAME ||''','''||A.ADMIN_CONTRACT_ID||''','''||''||''','''||'Y'||''','''||'0-R9NH'||''','''||'Default Organization'||''','''||''||''','''||i.ID_TP_CD || i.ref_num||''','''||CASE WHEN Y.NAME = 'Titular cuenta principal' THEN 'Titular principal producto' ELSE Y.NAME END||''','''||'FOR_IMPORT'||''','''||(CEIL(ROWNUM/20000)+500200000-1)||''','''||ROWNUM ||''');'
+from ADMMDM.CONTRACT A
+LEFT JOIN ADMMDM.CONTRACTCOMPONENT B ON A.CONTRACT_ID = B.CONTRACT_ID
+LEFT JOIN ADMMDM.CDPRODTP J ON B.PROD_TP_CD = J.PROD_TP_CD
+LEFT JOIN ADMMDM.CONTRACTROLE C ON B.CONTR_COMPONENT_ID = C.CONTR_COMPONENT_ID
+LEFT JOIN ADMMDM.IDENTIFIER I ON C.CONT_ID = I.CONT_ID
+LEFT JOIN ADMMDM.CDCONTRACTROLETP Y ON C.CONTR_ROLE_TP_CD = Y.CONTR_ROLE_TP_CD
+WHERE 1=1
+AND A.ADMIN_CONTRACT_ID IN ('')
+;
